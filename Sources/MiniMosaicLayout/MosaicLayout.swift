@@ -43,7 +43,7 @@ public class MiniMosaicLayoutModel: ObservableObject {
     }
 }
 
-public struct MiniMosaicLayout: Layout {
+public struct MosaicLayout: Layout {
     public struct MosaicCache {
         let frames: [Int: CGRect]
     }
