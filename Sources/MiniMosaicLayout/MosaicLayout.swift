@@ -9,17 +9,22 @@
 import Foundation
 import SwiftUI
 
-class MiniMosaicLayoutModel: ObservableObject {
-    let canvasWidth: CGFloat
-    let canvasHeight: CGFloat
+public class MiniMosaicLayoutModel: ObservableObject {
+    public let canvasWidth: CGFloat
+    public let canvasHeight: CGFloat
     
-    let numberOfColumns: Int
-    let numberOfRows: Int
+    public let numberOfColumns: Int
+    public let numberOfRows: Int
     
-    let interItemSpacing: CGFloat
-    let sizeables: [LayoutSizeProviding]
+    public let interItemSpacing: CGFloat
+    public let sizeables: [LayoutSizeProviding]
     
-    init(canvasWidth: CGFloat, canvasHeight: CGFloat, numberOfColumns: Int, numberOfRows: Int, interItemSpacing: CGFloat, sizeables: [LayoutSizeProviding]) {
+    public init(canvasWidth: CGFloat, 
+                canvasHeight: CGFloat, 
+                numberOfColumns: Int,
+                numberOfRows: Int,
+                interItemSpacing: CGFloat,
+                sizeables: [LayoutSizeProviding]) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
         self.numberOfColumns = numberOfColumns
@@ -27,8 +32,8 @@ class MiniMosaicLayoutModel: ObservableObject {
         self.interItemSpacing = interItemSpacing
         self.sizeables = sizeables
     }
-
-    var miniMosaicLayoutImage: MiniMosaicEngine {
+    
+    var miniMosaicLayoutEngine: MiniMosaicEngine {
         MiniMosaicEngine(canvasWidth: canvasWidth,
                          canvasHeight: canvasHeight,
                          numberOfColumns: numberOfColumns,
@@ -71,7 +76,7 @@ struct MiniMosaicLayout: Layout {
     }
     
     func makeCache(subviews: Subviews) -> MosaicCache {
-        let frames = model.miniMosaicLayoutImage.computePlacements()
+        let frames = model.miniMosaicLayoutEngine.computePlacements()
         return MosaicCache(frames: frames)
     }
 }
