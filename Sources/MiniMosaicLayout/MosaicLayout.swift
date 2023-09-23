@@ -48,9 +48,11 @@ struct MiniMosaicLayout: Layout {
         let frames: [Int: CGRect]
     }
     
-    var pageWidth: CGFloat
-    
     let model: MiniMosaicLayoutModel
+    
+    public init(model: MiniMosaicLayoutModel) {
+        self.model = model
+    }
     
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) -> CGSize {
         return CGSize(width: model.canvasWidth, height: model.canvasHeight)
