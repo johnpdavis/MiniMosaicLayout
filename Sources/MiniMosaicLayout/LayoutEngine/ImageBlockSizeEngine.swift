@@ -100,10 +100,7 @@ class ImageBlockSizeEngine {
         guard sizeProviding.width > 0 && sizeProviding.height > 0 else {
             return 1
         }
-        
-        //what's the width to height ratio.
-        let whRatio = sizeProviding.width / sizeProviding.height
-        
+
         var heightBlocks = Int(round(sizeProviding.height)) / Int(round(pixelSizeOfBlock.height))
         
         //prevent 0 returned height.

@@ -9,9 +9,7 @@
 import Foundation
 import SwiftUI
 
-class MosaicLayoutModel: ObservableObject {
-//    @Published var pageState: PageState?
-    
+class MiniMosaicLayoutModel: ObservableObject {
     let canvasWidth: CGFloat
     let canvasHeight: CGFloat
     
@@ -28,25 +26,8 @@ class MosaicLayoutModel: ObservableObject {
         self.numberOfRows = numberOfRows
         self.interItemSpacing = interItemSpacing
         self.sizeables = sizeables
-        
-//        recompute()
     }
-    
-//    private func recompute() {
-//        pageState = mosaicLayoutEngine.pageLayoutEngine.layoutPageWithItems(sizeables)
-//    }
-    
-//    var mosaicLayoutEngine: MosaicLayoutEngine {
-//        MosaicLayoutEngine(numberOfColumns: self.numberOfColumns,
-//                           numberOfPages: 1,
-//                           canvasWidth: self.canvasWidth,
-//                           pageHeight: .zero,
-//                           interItemSpacing: self.interItemSpacing,
-//                           itemsPerPage: sizeables.count,
-//                           userIntendedPercent: self.userIntendedPercent,
-//                           pageBottomEdgeBehavior: .notFlush)
-//    }
-    
+
     var miniMosaicLayoutImage: MiniMosaicEngine {
         MiniMosaicEngine(canvasWidth: canvasWidth,
                          canvasHeight: canvasHeight,
@@ -57,14 +38,14 @@ class MosaicLayoutModel: ObservableObject {
     }
 }
 
-struct MosaicLayout: Layout {
+struct MiniMosaicLayout: Layout {
     struct MosaicCache {
         let frames: [Int: CGRect]
     }
     
     var pageWidth: CGFloat
     
-    let model: MosaicLayoutModel
+    let model: MiniMosaicLayoutModel
     
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) -> CGSize {
         return CGSize(width: model.canvasWidth, height: model.canvasHeight)

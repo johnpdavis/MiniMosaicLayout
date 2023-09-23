@@ -102,7 +102,7 @@ class MiniMosaicEngine {
         }
         
         let pages = sizeableVariants.map { pageLayoutEngine.layoutPageWithItems($0) }
-        var pagesThatFillTheMosaic = pages.filter { page in
+        let pagesThatFillTheMosaic = pages.filter { page in
             !page.columnSizes.contains(where: { $0.height < numberOfRows })
         }
         
