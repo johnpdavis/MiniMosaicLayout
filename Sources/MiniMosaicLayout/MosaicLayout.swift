@@ -43,8 +43,8 @@ public class MiniMosaicLayoutModel: ObservableObject {
     }
 }
 
-struct LayoutForMiniMosaic: Layout {
-    struct MosaicCache {
+public struct MiniMosaicLayout: Layout {
+    public struct MosaicCache {
         let frames: [Int: CGRect]
     }
     
@@ -54,11 +54,11 @@ struct LayoutForMiniMosaic: Layout {
         self.model = model
     }
     
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) -> CGSize {
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) -> CGSize {
         return CGSize(width: model.canvasWidth, height: model.canvasHeight)
     }
     
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout MosaicCache) {
         print("Bounds: \(bounds)")
         for index in subviews.indices {
             guard index >= 0, index < cache.frames.count else {
@@ -77,7 +77,7 @@ struct LayoutForMiniMosaic: Layout {
         }
     }
     
-    func makeCache(subviews: Subviews) -> MosaicCache {
+    public func makeCache(subviews: Subviews) -> MosaicCache {
         let frames = model.miniMosaicLayoutEngine.computePlacements()
         return MosaicCache(frames: frames)
     }
