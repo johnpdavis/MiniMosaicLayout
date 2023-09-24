@@ -143,8 +143,8 @@ class MiniMosaicEngine {
             let localOffsetX: CGFloat = (CGFloat(slot.originColumn) * blockSizeWidth) + (interItemSpacing * CGFloat(slot.originColumn + gutterExtra))
             let localOffsetY: CGFloat = (CGFloat(slot.originRow) * blockSizeHeight) + (interItemSpacing * CGFloat(slot.originRow + gutterExtra))
             
-            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - 1))
-            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - 1))
+            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width))
+            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height))
             
             let frame = CGRect(x: localOffsetX, y: localOffsetY + pageMinY, width: width, height: height)
             
