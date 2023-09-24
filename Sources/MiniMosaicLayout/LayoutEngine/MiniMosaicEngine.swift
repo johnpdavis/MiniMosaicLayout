@@ -139,14 +139,15 @@ class MiniMosaicEngine {
             let blockSizeWidth = imageBlockSizeEngine.pixelSizeOfBlock.width
             
             let gutterOffsetExtra = guttersOnOutside ? 1 : 0
-            let gutterSizeExtra = guttersOnOutside ? 0 : 1
             
             let localOffsetX: CGFloat = (CGFloat(slot.originColumn) * blockSizeWidth) + (interItemSpacing * CGFloat(slot.originColumn + gutterOffsetExtra))
             let localOffsetY: CGFloat = (CGFloat(slot.originRow) * blockSizeHeight) + (interItemSpacing * CGFloat(slot.originRow + gutterOffsetExtra))
             
+            let widthGutterExtra = slot.maxX == numberOfColumns ? 1 : 0 // if the item toughes the training edge, puff it up by a gutter
+            let heightGutterExtra = slot.maxY == numberOfRows ? 1 : 0 // if the item touches the bottom, puff it up by a gutter
             
-            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - slot.originColumn))
-            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - slot.originRow))
+            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - 1 + widthGutterExtra))
+            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - 1 + heightGutterExtra))
             
             let frame = CGRect(x: localOffsetX, y: localOffsetY + pageMinY, width: width, height: height)
             
