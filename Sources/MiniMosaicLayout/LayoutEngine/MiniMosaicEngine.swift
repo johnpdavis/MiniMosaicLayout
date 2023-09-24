@@ -140,8 +140,8 @@ class MiniMosaicEngine {
             
             let gutterExtra = guttersOnOutside ? 1 : 0
             
-            let localOffsetX: CGFloat = (CGFloat(slot.originColumn) * blockSizeWidth) + (interItemSpacing * CGFloat(slot.blockSize.width + gutterExtra))
-            let localOffsetY: CGFloat =  (CGFloat(slot.originRow) * blockSizeHeight) + (interItemSpacing * CGFloat(slot.blockSize.height + gutterExtra))
+            let localOffsetX: CGFloat = (CGFloat(slot.originColumn) * blockSizeWidth) + (interItemSpacing * CGFloat(slot.originColumn + gutterExtra))
+            let localOffsetY: CGFloat = (CGFloat(slot.originRow) * blockSizeHeight) + (interItemSpacing * CGFloat(slot.originRow + gutterExtra))
             
             let width = blockSizeWidth * CGFloat(slot.blockSize.width) - (interItemSpacing * CGFloat(slot.blockSize.width - gutterExtra))
             let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) - (interItemSpacing * CGFloat(slot.blockSize.height - gutterExtra))
