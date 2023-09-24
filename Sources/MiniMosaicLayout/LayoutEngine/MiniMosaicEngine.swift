@@ -47,13 +47,15 @@ class MiniMosaicEngine {
         
         let columnWidth: CGFloat = {
             guard numberOfColumns > 0 else { return 1 }
-            let gutterTotal = CGFloat(numberOfColumns + 2) * interItemSpacing
+            let outsideExtra = guttersOnOutside ? 2 : 0
+            let gutterTotal = CGFloat(numberOfColumns + outsideExtra) * interItemSpacing
             return (canvasWidth - gutterTotal) / CGFloat(numberOfColumns)
         }()
         
         let rowHeight: CGFloat = {
             guard numberOfRows > 0 else { return 1 }
-            let gutterTotal = CGFloat(numberOfRows + 2) * interItemSpacing
+            let outsideExtra = guttersOnOutside ? 2 : 0
+            let gutterTotal = CGFloat(numberOfRows + outsideExtra) * interItemSpacing
             return (canvasHeight - gutterTotal) / CGFloat(numberOfRows)
         }()
         
