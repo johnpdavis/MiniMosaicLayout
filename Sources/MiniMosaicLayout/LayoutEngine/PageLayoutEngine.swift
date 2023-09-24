@@ -16,6 +16,7 @@ public class PageLayoutEngine {
     let numberOfRows: Int
     
     let interItemSpacing: CGFloat
+
     let pixelSizeOfBlock: CGSize
     
     var columnWidth: CGFloat {
@@ -30,7 +31,12 @@ public class PageLayoutEngine {
                              pixelSizeOfBlock: pixelSizeOfBlock)
     }()
     
-    init(canvasWidth: CGFloat, canvasHeight: CGFloat, numberOfColumns: Int, numberOfRows: Int, pixelSizeOfBlock: CGSize, interItemSpacing: CGFloat) {
+    init(canvasWidth: CGFloat, 
+         canvasHeight: CGFloat,
+         numberOfColumns: Int,
+         numberOfRows: Int,
+         pixelSizeOfBlock: CGSize,
+         interItemSpacing: CGFloat) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
         self.numberOfColumns = numberOfColumns

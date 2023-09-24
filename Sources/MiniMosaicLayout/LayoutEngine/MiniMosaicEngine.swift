@@ -16,6 +16,7 @@ class MiniMosaicEngine {
     let numberOfRows: Int
     
     let interItemSpacing: CGFloat
+    let guttersOnOutside: Bool
     let sizeables: [LayoutSizeProviding]
     
     let imageBlockSizeEngine: ImageBlockSizeEngine
@@ -34,12 +35,14 @@ class MiniMosaicEngine {
          numberOfColumns: Int,
          numberOfRows: Int,
          interItemSpacing: CGFloat,
+         guttersOnOutside: Bool,
          sizeables: [LayoutSizeProviding]) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
         self.numberOfColumns = numberOfColumns
         self.numberOfRows = numberOfRows
         self.interItemSpacing = interItemSpacing
+        self.guttersOnOutside = guttersOnOutside
         self.sizeables = sizeables
         
         let columnWidth: CGFloat = {
@@ -128,17 +131,18 @@ class MiniMosaicEngine {
     
     public func layoutSizes(for itemSizes: [LayoutSizeProviding], inPage page: PageState) -> [Int: CGRect] {
         let pageMinY: CGFloat = 0
-        
         var itemFrames: [Int: CGRect] = [:]
         page.itemBlockSlots.forEach { index, slot in
             let blockSizeHeight = imageBlockSizeEngine.pixelSizeOfBlock.height
             let blockSizeWidth = imageBlockSizeEngine.pixelSizeOfBlock.width
             
-            let localOffsetX: CGFloat = (interItemSpacing * CGFloat(slot.originColumn + 1)) + (CGFloat(slot.originColumn) * blockSizeWidth)
-            let localOffsetY: CGFloat = (interItemSpacing * CGFloat(slot.originRow + 1)) + (CGFloat(slot.originRow) * blockSizeHeight)
+            let gutterExtra = guttersOnOutside ? 0 : 1
             
-            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - 1))
-            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - 1))
+            let localOffsetX: CGFloat = (interItemSpacing * CGFloat(slot.originColumn + gutterExtra)) + (CGFloat(slot.originColumn) * blockSizeWidth)
+            let localOffsetY: CGFloat = (interItemSpacing * CGFloat(slot.originRow + gutterExtra)) + (CGFloat(slot.originRow) * blockSizeHeight)
+            
+            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - gutterExtra))
+            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - gutterExtra))
             
             let frame = CGRect(x: localOffsetX, y: localOffsetY + pageMinY, width: width, height: height)
             
