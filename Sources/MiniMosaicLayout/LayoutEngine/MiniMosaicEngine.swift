@@ -46,14 +46,14 @@ class MiniMosaicEngine {
         self.sizeables = sizeables
         
         let columnWidth: CGFloat = {
-            guard numberOfColumns > 0 else { return 1 }
+            guard numberOfColumns > 0 else { return 0 }
             let outsideExtra = guttersOnOutside ? 2 : 0
             let gutterTotal = CGFloat(numberOfColumns + outsideExtra) * interItemSpacing
             return (canvasWidth - gutterTotal) / CGFloat(numberOfColumns)
         }()
         
         let rowHeight: CGFloat = {
-            guard numberOfRows > 0 else { return 1 }
+            guard numberOfRows > 0 else { return 0 }
             let outsideExtra = guttersOnOutside ? 2 : 0
             let gutterTotal = CGFloat(numberOfRows + outsideExtra) * interItemSpacing
             return (canvasHeight - gutterTotal) / CGFloat(numberOfRows)
@@ -143,11 +143,8 @@ class MiniMosaicEngine {
             let localOffsetX: CGFloat = (CGFloat(slot.originColumn) * blockSizeWidth) + (interItemSpacing * CGFloat(slot.originColumn + gutterExtra))
             let localOffsetY: CGFloat = (CGFloat(slot.originRow) * blockSizeHeight) + (interItemSpacing * CGFloat(slot.originRow + gutterExtra))
             
-            let gutterOffset_width = interItemSpacing
-            let gutterOffset_height = interItemSpacing
-            
-            let width = blockSizeWidth * CGFloat(slot.blockSize.width) - gutterOffset_width
-            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) - gutterOffset_height
+            let width = blockSizeWidth * CGFloat(slot.blockSize.width) + (interItemSpacing * CGFloat(slot.blockSize.width - 1))
+            let height = (blockSizeHeight * CGFloat(slot.blockSize.height)) + (interItemSpacing * CGFloat(slot.blockSize.height - 1))
             
             let frame = CGRect(x: localOffsetX, y: localOffsetY + pageMinY, width: width, height: height)
             
