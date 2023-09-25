@@ -6,7 +6,12 @@
 //
 
 import CoreGraphics
+#if os(macOS)
+import AppKit
+#else
 import UIKit
+#endif
+
 
 public protocol LayoutSizeProviding {
     var sizeForLayout: CGSize { get }
@@ -22,9 +27,18 @@ extension LayoutSizeProviding {
     }
 }
 
+#if os(macOS)
+extension NSImage: LayoutSizeProviding {
+    public var sizeForLayout: CGSize { size }
+}
+
+#else
 extension UIImage: LayoutSizeProviding {
     public var sizeForLayout: CGSize { size }
 }
+
+#endif
+
 
 extension CGSize: LayoutSizeProviding {
     public var sizeForLayout: CGSize { self }
