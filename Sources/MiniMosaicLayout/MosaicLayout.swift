@@ -18,6 +18,7 @@ public class MiniMosaicLayoutModel: ObservableObject {
     
     public let interItemSpacing: CGFloat
     public let guttersOnOutside: Bool
+    public let bottomEdgeBehavior: PageLayoutEngine.BottomEdgeBehavior
     public let sizeables: [LayoutSizeProviding]
     
     public init(canvasWidth: CGFloat, 
@@ -26,6 +27,7 @@ public class MiniMosaicLayoutModel: ObservableObject {
                 numberOfRows: Int,
                 interItemSpacing: CGFloat,
                 guttersOnOutside: Bool,
+                bottomEdgeBehavior: PageLayoutEngine.BottomEdgeBehavior,
                 sizeables: [LayoutSizeProviding]) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
@@ -33,6 +35,7 @@ public class MiniMosaicLayoutModel: ObservableObject {
         self.numberOfRows = numberOfRows
         self.interItemSpacing = interItemSpacing
         self.guttersOnOutside = guttersOnOutside
+        self.bottomEdgeBehavior = bottomEdgeBehavior
         self.sizeables = sizeables
     }
     
@@ -42,7 +45,8 @@ public class MiniMosaicLayoutModel: ObservableObject {
                          numberOfColumns: numberOfColumns,
                          numberOfRows: numberOfRows,
                          interItemSpacing: interItemSpacing,
-                         guttersOnOutside: guttersOnOutside,
+                         guttersOnOutside: guttersOnOutside, 
+                         bottomEdgeBehavior: bottomEdgeBehavior,
                          sizeables: sizeables)
     }
 }

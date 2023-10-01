@@ -8,7 +8,11 @@
 import CoreGraphics
 
 public class PageLayoutEngine {
-     
+    public enum BottomEdgeBehavior {
+        case flush
+        case notFlush
+    }
+    
     // Provided on init
     let canvasWidth: CGFloat
     let canvasHeight: CGFloat
@@ -18,6 +22,8 @@ public class PageLayoutEngine {
     let interItemSpacing: CGFloat
 
     let pixelSizeOfBlock: CGSize
+    
+    let bottomEdgeBehavior: BottomEdgeBehavior
     
     var columnWidth: CGFloat {
         pixelSizeOfBlock.width
@@ -36,13 +42,15 @@ public class PageLayoutEngine {
          numberOfColumns: Int,
          numberOfRows: Int,
          pixelSizeOfBlock: CGSize,
-         interItemSpacing: CGFloat) {
+         interItemSpacing: CGFloat,
+         bottomEdgeBehavior: BottomEdgeBehavior) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
         self.numberOfColumns = numberOfColumns
         self.numberOfRows = numberOfRows
         self.pixelSizeOfBlock = pixelSizeOfBlock
         self.interItemSpacing = interItemSpacing
+        self.bottomEdgeBehavior = bottomEdgeBehavior
     }
     
     public func layoutPageWithItems(_ itemSizes: [LayoutSizeProviding]) -> PageState {
@@ -75,48 +83,52 @@ public class PageLayoutEngine {
                 assetBlockSize.reduce()
             }
         }
+        
+        if bottomEdgeBehavior == .flush {
+            makeBottomFlush(pageState)
+        }
 
         return pageState
     }
     
-//    func makeBottomFlush(_ page: PageState) {
-//        // find bottom items that can be pulled downward.
-//        let largestColumnHeight = Int(page.largestColumnHeight())
-//
-//        let downwardExpandableSlots = page.downwardExpandableBlockSlots()
-//        print(downwardExpandableSlots)
-//        downwardExpandableSlots.forEach { expandingSlot in
-//            let amount = largestColumnHeight - expandingSlot.originRow - expandingSlot.blockSize.height
-//            let newHeight = expandingSlot.blockSize.height + amount
-//            print("Setting height of \(expandingSlot) to: \(newHeight)")
-//            expandingSlot.blockSize.height = newHeight
-//        }
-//
-//        page.recomputeColumnSizes()
-//
-//        // find items that can be pulled rightward.
-//        let rightwardExpandableSlots = page.rightwardExpandableBlockSlots()
-//
-//        rightwardExpandableSlots.forEach { expandingSlot in
-//            let columnHeights = page.columnSizes.map { Int($0.height) }
-//
-//            let maxX = expandingSlot.maxX
-//            let maxY = expandingSlot.maxY
-//            var stretchableDistance: Int = 0
-//
-//            for height in columnHeights[maxX...] {
-//                if height < maxY {
-//                    stretchableDistance += 1
-//                } else {
-//                    break
-//                }
-//            }
-//
-//            expandingSlot.blockSize.width = expandingSlot.blockSize.width + stretchableDistance
-//        }
-//
-//        print(page)
-//    }
+    func makeBottomFlush(_ page: PageState) {
+        // find bottom items that can be pulled downward.
+        let largestColumnHeight = Int(page.largestColumnHeight())
+
+        let downwardExpandableSlots = page.downwardExpandableBlockSlots()
+        print(downwardExpandableSlots)
+        downwardExpandableSlots.forEach { expandingSlot in
+            let amount = largestColumnHeight - expandingSlot.originRow - expandingSlot.blockSize.height
+            let newHeight = expandingSlot.blockSize.height + amount
+            print("Setting height of \(expandingSlot) to: \(newHeight)")
+            expandingSlot.blockSize.height = newHeight
+        }
+
+        page.recomputeColumnSizes()
+
+        // find items that can be pulled rightward.
+        let rightwardExpandableSlots = page.rightwardExpandableBlockSlots()
+
+        rightwardExpandableSlots.forEach { expandingSlot in
+            let columnHeights = page.columnSizes.map { Int($0.height) }
+
+            let maxX = expandingSlot.maxX
+            let maxY = expandingSlot.maxY
+            var stretchableDistance: Int = 0
+
+            for height in columnHeights[maxX...] {
+                if height < maxY {
+                    stretchableDistance += 1
+                } else {
+                    break
+                }
+            }
+
+            expandingSlot.blockSize.width = expandingSlot.blockSize.width + stretchableDistance
+        }
+
+        print(page)
+    }
     
     func placeBlockSlotForItem(item: ImageBlockSize, index: Int, pageState: PageState) -> Bool {
         var possibleColumnSets: [Int: ColumnSet] = [:]

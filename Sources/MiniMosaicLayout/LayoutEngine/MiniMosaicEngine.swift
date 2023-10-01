@@ -17,6 +17,7 @@ class MiniMosaicEngine {
     
     let interItemSpacing: CGFloat
     let guttersOnOutside: Bool
+    let bottomEdgeBehavior: PageLayoutEngine.BottomEdgeBehavior
     let sizeables: [LayoutSizeProviding]
     
     let imageBlockSizeEngine: ImageBlockSizeEngine
@@ -27,7 +28,8 @@ class MiniMosaicEngine {
                          numberOfColumns: numberOfColumns,
                          numberOfRows: numberOfRows,
                          pixelSizeOfBlock: imageBlockSizeEngine.pixelSizeOfBlock,
-                         interItemSpacing: interItemSpacing)
+                         interItemSpacing: interItemSpacing, 
+                         bottomEdgeBehavior: bottomEdgeBehavior)
     }()
     
     init(canvasWidth: CGFloat,
@@ -36,6 +38,7 @@ class MiniMosaicEngine {
          numberOfRows: Int,
          interItemSpacing: CGFloat,
          guttersOnOutside: Bool,
+         bottomEdgeBehavior: PageLayoutEngine.BottomEdgeBehavior,
          sizeables: [LayoutSizeProviding]) {
         self.canvasWidth = canvasWidth
         self.canvasHeight = canvasHeight
@@ -43,6 +46,7 @@ class MiniMosaicEngine {
         self.numberOfRows = numberOfRows
         self.interItemSpacing = interItemSpacing
         self.guttersOnOutside = guttersOnOutside
+        self.bottomEdgeBehavior = bottomEdgeBehavior
         self.sizeables = sizeables
         
         let columnWidth: CGFloat = {
