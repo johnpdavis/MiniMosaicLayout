@@ -70,14 +70,15 @@ public struct MosaicLayout: Layout {
         print("Bounds: \(bounds)")
         for index in subviews.indices {
             guard index >= 0, index < cache.frames.count else {
-                subviews[index].place(at: .zero, proposal: ProposedViewSize(.zero))
+                subviews[index].place(at: bounds.origin, proposal: ProposedViewSize(.zero))
                 continue
             }
             
             let cachedFrame = cache.frames[index] ?? .zero
             
             let placementProposal = ProposedViewSize(width: cachedFrame.width, height: cachedFrame.height)
-            let origin = cachedFrame.origin
+            let origin = CGPoint(x: bounds.origin.x + cachedFrame.origin.x,
+                                 y: bounds.origin.y + cachedFrame.origin.y)
             
 //            print("\(placementProposal) @ \(origin)")
             subviews[index].place(at: origin,
