@@ -8,6 +8,10 @@
 import Foundation
 
 class MiniMosaicEngine {
+    struct PageCandidate {
+        let page: PageState
+        let originalBlockSizes: [Int: BlockSize]
+    }
 
     let canvasWidth: CGFloat
     let canvasHeight: CGFloat
@@ -73,12 +77,6 @@ class MiniMosaicEngine {
     var frames: [CGRect] = []
     
     func computePlacements() -> [Int: CGRect] {
-//        let blockSizes = sizeables.map {
-//            imageBlockSizeEngine.calculateBlockSize(of: $0)
-//        }
-        print("Columns: \(numberOfColumns) Rows: \(numberOfRows)")
-//        print(blockSizes)
-        
         // Compute pages with image represenations that change progressively.
         
         let maxDimension = max(numberOfRows, numberOfColumns)
@@ -87,7 +85,6 @@ class MiniMosaicEngine {
 
         (1...(maxDimension)).reversed().forEach { iteration in
             let ratio: CGFloat = CGFloat(iteration) / CGFloat(maxDimension)
-            print(ratio)
             let normalizedSizables = sizeables.map { sizeable in
                 let ratio = sizeable.width / sizeable.height
                 if sizeable.width > sizeable.height {
@@ -106,33 +103,69 @@ class MiniMosaicEngine {
             }
             
             let ratioedSizables = normalizedSizables.map { CGSize(width: $0.width * ratio, height: $0.height * ratio) }
-            print(ratioedSizables)
             sizeableVariants.append(ratioedSizables)
         }
         
-        let pages = sizeableVariants.map { pageLayoutEngine.layoutPageWithItems($0) }
-        let pagesThatFillTheMosaic = pages.filter { page in
-            !page.columnSizes.contains(where: { $0.height < numberOfRows })
+        let candidates = sizeableVariants.map { itemSizes in
+            let page = pageLayoutEngine.layoutPageWithItemsWithoutBottomFlush(itemSizes)
+            let originalBlockSizes = page.itemBlockSlots.mapValues {
+                BlockSize(width: $0.blockSize.width, height: $0.blockSize.height)
+            }
+
+            if bottomEdgeBehavior == .flush {
+                pageLayoutEngine.makeBottomFlush(page)
+            }
+
+            return PageCandidate(page: page, originalBlockSizes: originalBlockSizes)
         }
         
-        let pagesToInvestigate = pagesThatFillTheMosaic.isEmpty ? pages : pagesThatFillTheMosaic
-        
-        // Now that we have pages that likely fill the canvas. we need to pick the "best"
-        // Lets try the one that has the most elements?
-        
-//        let bestPage = pagesToInvestigate.max { left, right in
-//            print("\(left.itemBlockSlots.count) vs. \(right.itemBlockSlots.count)")
-//            return left.itemBlockSlots.count >= right.itemBlockSlots.count
-//        }
-        
-        let bestPage = pagesToInvestigate.sorted(by:  { $0.itemBlockSlots.count <= $1.itemBlockSlots.count }).last
-        
-//        let page = pageLayoutEngine.layoutPageWithItems(sizeables)
-//        print(page.itemBlockSlots)
-        
-        guard let page = bestPage else { return [:] }
+        guard let page = Self.bestCandidate(from: candidates, numberOfRows: numberOfRows)?.page else { return [:] }
         let frames = layoutSizes(for: sizeables, inPage: page)
         return frames
+    }
+
+    static func bestCandidate(from candidates: [PageCandidate], numberOfRows: Int) -> PageCandidate? {
+        candidates.max { left, right in
+            isBetterCandidate(right, than: left, numberOfRows: numberOfRows)
+        }
+    }
+
+    static func isBetterCandidate(_ candidate: PageCandidate, than other: PageCandidate, numberOfRows: Int) -> Bool {
+        let candidateFills = pageFillsCanvas(candidate.page, numberOfRows: numberOfRows)
+        let otherFills = pageFillsCanvas(other.page, numberOfRows: numberOfRows)
+        if candidateFills != otherFills {
+            return candidateFills
+        }
+
+        let candidateDistortion = totalPostFlushDistortion(
+            in: candidate.page,
+            from: candidate.originalBlockSizes
+        )
+        let otherDistortion = totalPostFlushDistortion(
+            in: other.page,
+            from: other.originalBlockSizes
+        )
+        if candidateDistortion != otherDistortion {
+            return candidateDistortion < otherDistortion
+        }
+
+        return candidate.page.itemBlockSlots.count > other.page.itemBlockSlots.count
+    }
+
+    static func pageFillsCanvas(_ page: PageState, numberOfRows: Int) -> Bool {
+        !page.columnSizes.contains { $0.height < numberOfRows }
+    }
+
+    static func totalPostFlushDistortion(in page: PageState, from originalBlockSizes: [Int: BlockSize]) -> Int {
+        page.itemBlockSlots.reduce(0) { total, item in
+            let index = item.key
+            let slot = item.value
+            guard let originalBlockSize = originalBlockSizes[index] else { return total }
+
+            let widthDistortion = abs(slot.blockSize.width - originalBlockSize.width)
+            let heightDistortion = abs(slot.blockSize.height - originalBlockSize.height)
+            return total + widthDistortion + heightDistortion
+        }
     }
     
     public func layoutSizes(for itemSizes: [LayoutSizeProviding], inPage page: PageState) -> [Int: CGRect] {

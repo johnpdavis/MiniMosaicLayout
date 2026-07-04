@@ -54,6 +54,16 @@ public class PageLayoutEngine {
     }
     
     public func layoutPageWithItems(_ itemSizes: [LayoutSizeProviding]) -> PageState {
+        let pageState = layoutPageWithItemsWithoutBottomFlush(itemSizes)
+
+        if bottomEdgeBehavior == .flush {
+            makeBottomFlush(pageState)
+        }
+
+        return pageState
+    }
+
+    func layoutPageWithItemsWithoutBottomFlush(_ itemSizes: [LayoutSizeProviding]) -> PageState {
         let itemBlockSizes = itemSizes.map { imageBlockSizeEngine.calculateBlockSize(of: $0) }
         
         // We now have the block sizes of everything we want to layout on a page.
@@ -83,24 +93,20 @@ public class PageLayoutEngine {
                 assetBlockSize.reduce()
             }
         }
-        
-        if bottomEdgeBehavior == .flush {
-            makeBottomFlush(pageState)
-        }
 
         return pageState
     }
     
     func makeBottomFlush(_ page: PageState) {
         // find bottom items that can be pulled downward.
-        let largestColumnHeight = Int(page.largestColumnHeight())
+        let targetColumnHeight = numberOfRows
 
         let downwardExpandableSlots = page.downwardExpandableBlockSlots()
-        print(downwardExpandableSlots)
         downwardExpandableSlots.forEach { expandingSlot in
-            let amount = largestColumnHeight - expandingSlot.originRow - expandingSlot.blockSize.height
+            let amount = targetColumnHeight - expandingSlot.originRow - expandingSlot.blockSize.height
+            guard amount > 0 else { return }
+
             let newHeight = expandingSlot.blockSize.height + amount
-            print("Setting height of \(expandingSlot) to: \(newHeight)")
             expandingSlot.blockSize.height = newHeight
         }
 
@@ -126,8 +132,6 @@ public class PageLayoutEngine {
 
             expandingSlot.blockSize.width = expandingSlot.blockSize.width + stretchableDistance
         }
-
-        print(page)
     }
     
     func placeBlockSlotForItem(item: ImageBlockSize, index: Int, pageState: PageState) -> Bool {

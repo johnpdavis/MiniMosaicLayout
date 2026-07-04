@@ -159,11 +159,8 @@ extension PageState {
         let largestColumnHeight = Int(largestColumnHeight())
         
         let slotsClosestToBottomForEachColumn = slotsClosestToBottomForEachColumn()
-        print(slotsClosestToBottomForEachColumn.count)
         
         let uniqueSlotsClosestToBottom = Set<BlockSlot>(slotsClosestToBottomForEachColumn)
-        print(uniqueSlotsClosestToBottom.count)
-        print(uniqueSlotsClosestToBottom)
         
         let slotsNotOnTheBottom = uniqueSlotsClosestToBottom.filter { slot in
             let maxY = slot.originRow + slot.blockSize.height
@@ -193,11 +190,8 @@ extension PageState {
     
     func downwardExpandableBlockSlots() -> [BlockSlot] {
         let slotsClosestToBottomForEachColumn = slotsClosestToBottomForEachColumn()
-        print(slotsClosestToBottomForEachColumn.count)
         
         let uniqueSlotsClosestToBottom = Set<BlockSlot>(slotsClosestToBottomForEachColumn)
-        print(uniqueSlotsClosestToBottom.count)
-        print(uniqueSlotsClosestToBottom)
         
         // remove the overlappers that are unable to be drawn downward because another lowest slot is in the way
         let expandableSlots = uniqueSlotsClosestToBottom.filter { slot in
